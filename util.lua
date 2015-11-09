@@ -21,6 +21,10 @@ function util.string.split(str, delim)
 	-- TODO: Write this.
 end
 
+function util.string.strip(str)
+	return (str:gsub("^%s+", ""):gsub("%s+$", ""))
+end
+
 ---
 
 util.table = {}
