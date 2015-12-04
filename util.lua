@@ -176,5 +176,23 @@ function util.math.map(n, in_min, in_max, out_min, out_max)
 	return (n - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 end
 
+-- Wraps a value into a range, inclusive.
+function util.math.wrap(min, n, max)
+	local diff = (max - min + 1)
+
+	if n < min then
+		repeat n = n + diff until n >= min
+	elseif n > max then
+		repeat n = n - diff until n <= max
+	end
+
+	return n
+end
+
+-- Takes a range, a value and an increment, adds the increment to the value
+-- and wraps it to the range, inclusive.
+function util.math.cycle(low, n, high, inc)
+	return util.math.wrap(low, n + inc, high)
+end
 
 return util
