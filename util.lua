@@ -29,9 +29,11 @@ end
 
 util.table = {}
 
--- Returns a deep copy of a table.
+-- Returns a deep copy of a table (with the same metatable).
 function util.table.clone(t)
-	local c = setmetatable({}, getmetatable(t))
+	local mt = getmetatable(t)
+	local c = setmetatable({}, type(mt) == "table" and mt or {})
+
 	for k, v in pairs(t) do
 		if type(v) == "table" then
 			c[k] = util.table.clone(v)
@@ -39,14 +41,15 @@ function util.table.clone(t)
 			c[k] = v
 		end
 	end
+
 	return c
 end
 
 -- Joins two or more tables together.
 function util.table.join(...)
 	local result = {}
+
 	for _, tab in ipairs({...}) do
-		---
 		-- Deal with number keys first so we can get them in order.
 		for i, v in ipairs(tab) do
 			table.insert(result, v)
@@ -57,8 +60,8 @@ function util.table.join(...)
 				result[k] = v
 			end
 		end
-		---
 	end
+
 	return result
 end
 
@@ -75,9 +78,11 @@ end
 -- Returns a new table with the values of t as keys and vice versa.
 function util.table.invert(t)
 	local result = {}
+
 	for k, v in pairs(t) do
 		result[v] = k
 	end
+
 	return result
 end
 
@@ -86,6 +91,7 @@ function util.table.has(t, keys)
 	for _, c in ipairs(keys) do
 		if not t[c] then return false end
 	end
+
 	return true
 end
 
@@ -100,7 +106,8 @@ function util.table.check(t, keys, msg)
 	end
 
 	if #missing > 0 then
-		return false, (msg and (msg .. ": ") or "") .. "missing fields: " .. table.concat(missing, ", ")
+		return false, ("%smissing fields: %s"):format(
+			msg and (msg .. ": ") or "", table.concat(missing, ", "))
 	else
 		return true
 	end
@@ -109,20 +116,24 @@ end
 -- Returns the highest numerical key of t.
 function util.table.maxn(t)
 	local max = -math.huge
+
 	for k, v in pairs(t) do
 		if type(k) == "number" then
 			max = math.max(k, max)
 		end
 	end
-	return (max ~= -math.huge) and max or nil
+
+	return (max ~= -math.huge) and max
 end
 
--- Returns the number of elements in t.
+-- Returns the number of (non-nil) elements in t.
 function util.table.nelem(t)
 	local count = 0
+
 	for k,v in pairs(t) do
 		count = count + 1
 	end
+
 	return count
 end
 
