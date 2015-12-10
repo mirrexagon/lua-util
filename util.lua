@@ -21,6 +21,31 @@ function util.string.split(str, delim)
 	-- TODO: Write this.
 end
 
+-- Returns a table in which each element is a single character of str
+-- such that `table.concat(util.string.chars(str)) == str`.
+function util.string.chars(str)
+	local charpattern = utf8.charpattern or "."
+	local t = {}
+
+	for c in str:gmatch(charpattern) do
+		table.insert(t, c)
+	end
+
+	return t
+end
+
+-- Returns all the whitespace-separated words of str in a table.
+function util.string.words(str)
+	local result = {}
+
+	for s in str:gmatch("%S+") do
+		table.insert(result, s)
+	end
+
+	return result
+end
+
+-- Strips whitespace off the ends of a string.
 function util.string.strip(str)
 	return (str:gsub("^%s+", ""):gsub("%s+$", ""))
 end
